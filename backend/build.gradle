@@ -44,7 +44,7 @@ dependencies {
 		// google-genai tire encore guava 33.4.0, vulnerable jusqu'a 33.7.1
 		// (GHSA-xxph-c9ww-hj94). Plancher seulement: une version plus recente
 		// demandee par une dependance reste retenue. A retirer quand le SDK suit.
-		implementation('com.google.guava:guava:33.7.2-jre') {
+		implementation('com.google.guava:guava:33.8.0-jre') {
 			because 'GHSA-xxph-c9ww-hj94'
 		}
 	}
