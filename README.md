@@ -4,9 +4,6 @@ A personal accounting app that replaces an Excel workbook for tracking purchase 
 sales invoices: numbering, filing supporting documents, recurring expenses, and
 invoice pre-filling by an LLM from the PDF.
 
-<!-- Screenshot: generate it with fictitious data (no real supplier in this public repository) -->
-![Invoice list](docs/screenshot.png)
-
 ## What it does
 
 - **Invoice ledger** for purchases and sales, with one sequential numbering per year
