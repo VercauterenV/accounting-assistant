@@ -223,7 +223,7 @@ class InvoiceExtractionServiceTest {
 
             service.extract(scannedPdf());
 
-            List<ContentBlockParam> blocks = sentToClaude().messages().getFirst().content().asBlockParams();
+            List<ContentBlockParam> blocks = sentToClaude().messages().getFirst().content().asContentBlockParams();
             assertThat(blocks.getFirst().isDocument()).isTrue();
             assertThat(blocks.get(1).asText().text()).isEqualTo("Extract the data from this document.");
         }
@@ -241,7 +241,7 @@ class InvoiceExtractionServiceTest {
 
             service.extract(image(contentType));
 
-            ContentBlockParam block = sentToClaude().messages().getFirst().content().asBlockParams().getFirst();
+            ContentBlockParam block = sentToClaude().messages().getFirst().content().asContentBlockParams().getFirst();
             assertThat(block.isImage()).isTrue();
             Base64ImageSource.MediaType mediaType = block.asImage().source().asBase64().mediaType();
             assertThat(mediaType.known().name()).isEqualTo(expected);
