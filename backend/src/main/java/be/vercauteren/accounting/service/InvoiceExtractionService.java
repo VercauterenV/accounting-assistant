@@ -344,7 +344,7 @@ public class InvoiceExtractionService {
             .model(anthropicModel)
             .systemOfTextBlockParams(List.of(cacheableSystemBlock(systemPrompt)))
             .outputConfig(claudeJsonOutput(schema))
-            .addUserMessageOfBlockParams(List.of(
+            .addUserMessageOfContentBlockParams(List.of(
                 fileBlock,
                 ContentBlockParam.ofText(TextBlockParam.builder()
                     .text(userPrefix + "Extract the data from this document.")
