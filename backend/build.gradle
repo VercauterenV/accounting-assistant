@@ -40,6 +40,14 @@ dependencies {
 	implementation 'com.twelvemonkeys.imageio:imageio-webp:3.15.3'
 	implementation 'com.anthropic:anthropic-java:3.3.0'
 	implementation 'com.google.genai:google-genai:1.79.0'
+	constraints {
+		// google-genai tire encore guava 33.4.0, vulnerable jusqu'a 33.7.1
+		// (GHSA-xxph-c9ww-hj94). Plancher seulement: une version plus recente
+		// demandee par une dependance reste retenue. A retirer quand le SDK suit.
+		implementation('com.google.guava:guava:33.7.2-jre') {
+			because 'GHSA-xxph-c9ww-hj94'
+		}
+	}
 	implementation 'org.apache.poi:poi-ooxml:5.5.1'
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'org.postgresql:postgresql'
