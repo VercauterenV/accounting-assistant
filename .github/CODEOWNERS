@@ -4,5 +4,5 @@
 # .claude/  hooks run commands on the machine of whoever starts Claude Code here,
 #           and the rules are instructions agents follow
 # .github/  workflows run on pull requests; this file guards itself
-/.claude/  @TDW1302
-/.github/  @TDW1302
+/.claude/  @VercauterenV
+/.github/  @VercauterenV

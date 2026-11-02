@@ -112,5 +112,5 @@ jobs:
           push: ${{ github.event_name == 'push' }}
           build-args: APP_VERSION=${{ github.sha }}
           tags: |
-            ghcr.io/tdw1302/accounting-assistant:latest
-            ghcr.io/tdw1302/accounting-assistant:${{ github.sha }}
+            ghcr.io/vercauterenv/accounting-assistant:latest
+            ghcr.io/vercauterenv/accounting-assistant:${{ github.sha }}
