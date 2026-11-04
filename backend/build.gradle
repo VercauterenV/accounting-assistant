@@ -25,6 +25,11 @@ repositories {
 	mavenCentral()
 }
 
+// opentelemetry-api arrive avec anthropic-java, mais c'est Spring Boot qui en fixe la
+// version (1.62.0 en 4.1.2), vulnerable jusqu'a 1.66.0 (GHSA-ccrj-gw8r-854m). A retirer
+// quand le BOM de Spring Boot passe a 1.67.0 ou plus.
+ext['opentelemetry.version'] = '1.67.0'
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	// spring-boot-flyway porte l'auto-configuration: depuis Spring Boot 4 elle
