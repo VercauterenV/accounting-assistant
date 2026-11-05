@@ -8,6 +8,7 @@ globs: frontend/**
 - `models/` — TypeScript interfaces + types (Invoice, Supplier, InvoiceRequest...)
 - `services/` — HTTP services (`@Injectable({ providedIn: 'root' })`, `inject(HttpClient)`)
 - `invoices/` — invoice-list, invoice-form, batch-upload, missing-documents
+- `analysis/` — analysis (category comparison, new/missing suppliers, purchase inventory)
 - `admin/` — danger-zone, supplier-merge (ADMIN only)
 - `peppol/` — peppol-list
 - `recurring/` — recurring-list, recurring-form, recurring-attach (recurring expense templates)

@@ -1,0 +1,198 @@
+<div class="page-header">
+  <h1>Analyse des achats</h1>
+  <div class="header-actions">
+    <select [ngModel]="year()" (ngModelChange)="setYear($event)" aria-label="Année">
+      @for (y of years; track y) {
+        <option [ngValue]="y">{{ y }}</option>
+      }
+    </select>
+    @if (tab() !== 'inventory' && isCurrentYear()) {
+      <label class="toggle" title="Coupe les deux années au même jour du calendrier">
+        <input type="checkbox" [ngModel]="comparable()" (ngModelChange)="setComparable($event)">
+        Période comparable
+      </label>
+    }
+    @if (tab() === 'inventory') {
+      <select [ngModel]="inventoryCategory()" (ngModelChange)="setInventoryCategory($event)" aria-label="Catégorie">
+        <option [ngValue]="null">-- Toutes les catégories --</option>
+        @for (c of categories; track c.value) {
+          <option [ngValue]="c.value">{{ c.label }}</option>
+        }
+      </select>
+    }
+  </div>
+</div>
+
+<div class="tabs" role="tablist">
+  <button role="tab" [class.active]="tab() === 'categories'" [attr.aria-selected]="tab() === 'categories'"
+          (click)="selectTab('categories')">Par catégorie</button>
+  <button role="tab" [class.active]="tab() === 'changes'" [attr.aria-selected]="tab() === 'changes'"
+          (click)="selectTab('changes')">Nouveaux et absents</button>
+  <button role="tab" [class.active]="tab() === 'inventory'" [attr.aria-selected]="tab() === 'inventory'"
+          (click)="selectTab('inventory')">Inventaire des achats</button>
+</div>
+
+@if (error()) {
+  <p class="alert alert-error">{{ error() }}</p>
+}
+@if (loading()) {
+  <p class="hint">Chargement…</p>
+}
+
+@switch (tab()) {
+  @case ('categories') {
+    @if (categoryData(); as data) {
+      <p class="hint">
+        {{ data.year }} comparé à {{ data.previousYear }}
+        @if (data.until) {
+          — du 1er janvier au {{ data.until | date:'d MMMM' }} pour les deux années
+        } @else {
+          — années complètes
+        }
+        · montants TVAC
+      </p>
+      @if (data.missingAmountCount > 0) {
+        <p class="alert alert-warning">
+          {{ data.missingAmountCount }} facture(s) sans montant: comptée(s), mais pas additionnée(s).
+        </p>
+      }
+      <div class="legend">
+        <span><i class="swatch current"></i>{{ data.year }}</span>
+        <span><i class="swatch previous"></i>{{ data.previousYear }}</span>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Catégorie</th>
+              <th class="bars-col"></th>
+              <th class="text-right">{{ data.year }}</th>
+              <th class="text-right">{{ data.previousYear }}</th>
+              <th class="text-right">Écart</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of data.rows; track row.category) {
+              <tr>
+                <td>{{ categoryLabel(row.category) }}</td>
+                <td class="bars-col">
+                  <div class="bar current" [style.width]="barWidth(row.current.amountIncVat)"></div>
+                  <div class="bar previous" [style.width]="barWidth(row.previous.amountIncVat)"></div>
+                </td>
+                <td class="text-right">
+                  {{ row.current.amountIncVat | currency:'EUR':'symbol':'1.2-2' }}
+                  <small>{{ row.current.count }} fact.</small>
+                </td>
+                <td class="text-right">
+                  {{ row.previous.amountIncVat | currency:'EUR':'symbol':'1.2-2' }}
+                  <small>{{ row.previous.count }} fact.</small>
+                </td>
+                <td class="text-right">
+                  <ng-container *ngTemplateOutlet="deltaCell; context: { $implicit: delta(row) }" />
+                </td>
+              </tr>
+            } @empty {
+              <tr><td colspan="5" class="empty">Aucun achat sur ces deux années.</td></tr>
+            }
+          </tbody>
+          @if (data.rows.length > 0) {
+            <tfoot>
+              <tr>
+                <th>Total</th>
+                <th class="bars-col"></th>
+                <th class="text-right">{{ data.total.current.amountIncVat | currency:'EUR':'symbol':'1.2-2' }}</th>
+                <th class="text-right">{{ data.total.previous.amountIncVat | currency:'EUR':'symbol':'1.2-2' }}</th>
+                <th class="text-right">
+                  <ng-container *ngTemplateOutlet="deltaCell; context: { $implicit: delta(data.total) }" />
+                </th>
+              </tr>
+            </tfoot>
+          }
+        </table>
+      </div>
+    }
+  }
+
+  @case ('changes') {
+    @if (changesData(); as data) {
+      <p class="hint">
+        @if (data.until) {
+          Jusqu'au {{ data.until | date:'d MMMM' }} pour les deux années · montants TVAC
+        } @else {
+          Années complètes · montants TVAC
+        }
+      </p>
+      <h2>Nouveaux en {{ data.year }} <small>aucune facture en {{ data.previousYear }}</small></h2>
+      <ng-container *ngTemplateOutlet="supplierTable; context: { $implicit: data.newSuppliers, fit: true,
+        empty: 'Aucun nouveau fournisseur.' }" />
+      <h2>Absents en {{ data.year }} <small>facturés en {{ data.previousYear }}, pas encore cette année</small></h2>
+      <ng-container *ngTemplateOutlet="supplierTable; context: { $implicit: data.missingSuppliers, fit: true,
+        empty: 'Aucun fournisseur absent.' }" />
+    }
+  }
+
+  @case ('inventory') {
+    @if (inventoryData(); as data) {
+      <p class="hint">
+        {{ data.suppliers.length }} fournisseur(s), {{ data.total.count }} facture(s) ·
+        {{ data.total.amountExVat | currency:'EUR':'symbol':'1.2-2' }} HTVA ·
+        <strong>{{ data.total.amountIncVat | currency:'EUR':'symbol':'1.2-2' }} TVAC</strong>
+      </p>
+      @if (data.missingAmountCount > 0) {
+        <p class="alert alert-warning">
+          {{ data.missingAmountCount }} facture(s) sans montant: comptée(s), mais pas additionnée(s).
+        </p>
+      }
+      <ng-container *ngTemplateOutlet="supplierTable; context: { $implicit: data.suppliers, fit: false,
+        empty: 'Aucun achat.' }" />
+    }
+  }
+}
+
+<ng-template #deltaCell let-d>
+  @if (d.direction === 'flat') {
+    <span class="delta flat">=</span>
+  } @else {
+    <span class="delta" [class.up]="d.direction === 'up'" [class.down]="d.direction === 'down'">
+      {{ d.direction === 'up' ? '▲' : '▼' }} {{ d.amount | currency:'EUR':'symbol':'1.2-2' }}
+      @if (d.percent !== null) {
+        <small>{{ d.percent }} %</small>
+      } @else {
+        <small>nouveau</small>
+      }
+    </span>
+  }
+</ng-template>
+
+<ng-template #supplierTable let-suppliers let-fit="fit" let-empty="empty">
+  <div class="table-wrapper" [class.fit]="fit">
+    <table>
+      <thead>
+        <tr>
+          <th>Fournisseur</th>
+          <th>Catégorie</th>
+          <th class="text-right">Factures</th>
+          <th class="text-right">HTVA</th>
+          <th class="text-right">TVAC</th>
+          <th>Première</th>
+          <th>Dernière</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (s of suppliers; track s.supplierId) {
+          <tr>
+            <td>{{ s.supplierName }}</td>
+            <td>{{ categoryLabel(s.category) }}</td>
+            <td class="text-right">{{ s.count }}</td>
+            <td class="text-right">{{ s.amountExVat | currency:'EUR':'symbol':'1.2-2' }}</td>
+            <td class="text-right">{{ s.amountIncVat | currency:'EUR':'symbol':'1.2-2' }}</td>
+            <td>{{ s.firstDate | date:'dd/MM/yyyy' }}</td>
+            <td>{{ s.lastDate | date:'dd/MM/yyyy' }}</td>
+          </tr>
+        } @empty {
+          <tr><td colspan="7" class="empty">{{ empty }}</td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</ng-template>

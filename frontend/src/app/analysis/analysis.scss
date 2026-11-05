@@ -1,0 +1,193 @@
+// Annee courante / annee precedente: paire validee pour le daltonisme.
+$current: #2a78d6;
+$previous: #eb6834;
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+
+  select {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    background: #fff;
+  }
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  color: #475569;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.tabs {
+  display: flex;
+  gap: 0.25rem;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 1rem;
+  flex-shrink: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  button {
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    padding: 0.5rem 0.875rem;
+    font: inherit;
+    color: #64748b;
+    cursor: pointer;
+    white-space: nowrap;
+
+    &:hover {
+      color: #1e293b;
+    }
+
+    &.active {
+      color: #1e293b;
+      font-weight: 600;
+      border-bottom-color: $current;
+    }
+  }
+}
+
+.hint,
+.alert,
+.legend,
+h2 {
+  flex-shrink: 0;
+}
+
+.hint {
+  color: #64748b;
+  margin-bottom: 0.75rem;
+}
+
+.alert {
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.alert-warning {
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  color: #92400e;
+}
+
+.alert-error {
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  color: #991b1b;
+}
+
+h2 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 1rem 0 0.5rem;
+
+  small {
+    font-weight: 400;
+    color: #64748b;
+    margin-left: 0.375rem;
+  }
+}
+
+.legend {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+  color: #475569;
+
+  .swatch {
+    display: inline-block;
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 2px;
+    margin-right: 0.375rem;
+    vertical-align: -1px;
+  }
+}
+
+.swatch.current,
+.bar.current {
+  background: $current;
+}
+
+.swatch.previous,
+.bar.previous {
+  background: $previous;
+}
+
+.bars-col {
+  width: 35%;
+  min-width: 120px;
+}
+
+.bar {
+  height: 0.5rem;
+  border-radius: 0 2px 2px 0;
+  min-width: 1px;
+
+  & + .bar {
+    margin-top: 2px;
+  }
+}
+
+td small {
+  display: block;
+  color: #94a3b8;
+  font-size: 0.75rem;
+}
+
+.delta {
+  white-space: nowrap;
+
+  &.up {
+    color: #b91c1c;
+  }
+
+  &.down {
+    color: #15803d;
+  }
+
+  &.flat {
+    color: #94a3b8;
+  }
+
+  small {
+    display: inline;
+    margin-left: 0.25rem;
+    color: inherit;
+    opacity: 0.8;
+  }
+}
+
+tfoot th {
+  background: #f1f5f9;
+  text-transform: none;
+  font-size: 0.875rem;
+  color: #1e293b;
+  letter-spacing: 0;
+}
+
+.empty {
+  text-align: center;
+  color: #64748b;
+  padding: 2rem !important;
+}
+
+// Deux tableaux l'un sous l'autre: ils prennent leur hauteur, pas tout l'ecran.
+@media (min-width: 769px) {
+  .table-wrapper.fit {
+    flex: 0 0 auto;
+    min-height: 0;
+  }
+}
