@@ -36,6 +36,7 @@ globs: backend/**
 - `GET/POST/PUT/DELETE /api/users/{id}` — user CRUD (ADMIN only)
 - `/api/recurring-expenses` — recurring expense templates, instalment generation, linking existing rows (`/{id}/attachable`, `/options/{invoiceId}`)
 - `/api/inbox` — drop-box file matching; `/api/import` — Excel import
+- `GET /api/analysis/categories|suppliers/changes|suppliers?year=&previousYear=&until=&category=` — read-only purchase aggregates (`AnalysisService`)
 - `/api/admin` — ADMIN tools (danger zone, supplier duplicates/merge)
 - `GET /api/config` — frontend configuration (session required)
 - This list is a map, not the contract: the controllers are the source of truth

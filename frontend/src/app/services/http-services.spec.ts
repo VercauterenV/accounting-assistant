@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { AdminService } from './admin.service';
+import { AnalysisService } from './analysis.service';
 import { ImportService } from './import.service';
 import { InboxService } from './inbox.service';
 import { InvoiceService } from './invoice.service';
@@ -46,6 +47,22 @@ describe('HTTP services', () => {
     expectCall('GET', '/api/admin/suppliers/duplicates');
     service.mergeSuppliers(1, 2).subscribe();
     expectCall('POST', '/api/admin/suppliers/merge?keepId=1&removeId=2');
+  });
+
+  it('AnalysisService', () => {
+    const service = TestBed.inject(AnalysisService);
+    service.compareCategories(2026, null).subscribe();
+    expectCall('GET', '/api/analysis/categories?year=2026');
+    service.compareCategories(2026, '2026-10-05').subscribe();
+    expectCall('GET', '/api/analysis/categories?year=2026&until=2026-10-05');
+    service.compareSuppliers(2025, null).subscribe();
+    expectCall('GET', '/api/analysis/suppliers/changes?year=2025');
+    service.compareSuppliers(2026, '2026-10-05').subscribe();
+    expectCall('GET', '/api/analysis/suppliers/changes?year=2026&until=2026-10-05');
+    service.inventory(2026, null).subscribe();
+    expectCall('GET', '/api/analysis/suppliers?year=2026');
+    service.inventory(2026, 'RESTAURANT').subscribe();
+    expectCall('GET', '/api/analysis/suppliers?year=2026&category=RESTAURANT');
   });
 
   it('ImportService and InboxService', () => {
